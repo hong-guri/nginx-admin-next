@@ -129,7 +129,7 @@ export async function checkVulnerabilityPattern(path: string): Promise<{ detecte
 
 export async function logSecurityEvent(
   proxyHostId: number | null,
-  eventType: 'BLOCKED_IP' | 'BLOCKED_PATH' | 'SUSPICIOUS_UA' | 'RATE_LIMIT' | 'VULNERABILITY_DETECTED',
+  eventType: 'BLOCKED_IP' | 'BLOCKED_PATH' | 'SUSPICIOUS_UA' | 'RATE_LIMIT' | 'VULNERABILITY_DETECTED' | 'ANOMALY_DETECTED',
   ip: string | null,
   path: string | null,
   userAgent: string | null,

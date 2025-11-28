@@ -129,7 +129,7 @@ export async function processLogLine(
       securityThreat.threatType as any,
       parsed.ipAddress,
       parsed.url,
-      parsed.userAgent,
+      parsed.userAgent ?? null,
       {
         severity: securityThreat.severity,
         pattern: securityThreat.pattern,
@@ -156,7 +156,7 @@ export async function processLogLine(
       'RATE_LIMIT',
       parsed.ipAddress,
       parsed.url,
-      parsed.userAgent,
+      parsed.userAgent ?? null,
       { requestCount: rateLimit.count }
     ).catch(() => {}); // 에러 무시
 
@@ -178,7 +178,7 @@ export async function processLogLine(
         'ANOMALY_DETECTED',
         parsed.ipAddress,
         parsed.url,
-        parsed.userAgent,
+        parsed.userAgent ?? null,
         { anomalies: anomalies.anomalies }
       ).catch(() => {}); // 에러 무시
     }
