@@ -1,0 +1,57 @@
+services:
+  nginx-admin-next:
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    # 개발 모드
+    # command: sh -c "npm install --include=dev && npm run dev"
+    # 프로덕션 모드 
+    command: sh -c "npm install --include=dev && npm run build && npm start"
+    env_file:
+      - .env
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    networks:
+      - default
+    restart: unless-stopped
+
+  nginx-node-server:
+    image: node:24-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+      # NPM 로그 디렉토리 마운트
+      # 환경에 맞게 경로를 수정하세요
+      # 예: - /path/to/npm/logs:/data/logs:ro
+      - ${NPM_LOG_VOLUME:-./logs}:/data/logs:ro
+    command: sh -c "npm install mysql2 && node server/index.js"
+    env_file:
+      - .env
+    environment:
+      - NPM_LOG_DIR=${NPM_LOG_DIR:-/data/logs}
+      - WATCH_INTERVAL=${WATCH_INTERVAL:-1000}
+      - BATCH_SIZE=${BATCH_SIZE:-10}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME:-nginx_admin}
+      - NPM_API_URL=${NPM_API_URL}
+      - NPM_USERNAME=${NPM_USERNAME}
+      - NPM_PASSWORD=${NPM_PASSWORD}
+    networks:
+      - default
+      - gatsby_network
+    restart: unless-stopped
+    depends_on:
+      - nginx-admin-next
+
+networks:
+  default:
+    name: nginx-admin-next_default
+    driver: bridge
+  gatsby_network:
+    external: true
+    name: gatsby_network
